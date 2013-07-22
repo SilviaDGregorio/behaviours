@@ -23,7 +23,8 @@
 
 using namespace AB;
 
-Botones::Botones(const char* type): Action(type)
+
+Botones::Botones(const char* type): ActionThread(type)
 {
 	arriba = "";
 	abajo = "";
@@ -89,8 +90,8 @@ AB::AttrList Botones::attrList()
   return l;
 }
 
-
 void Botones::exec()
 {
-	INFO("Exec botones %p",this);
+  AB::ActionThread::exec();
+	INFO(" Exec botones %p",this);
 }

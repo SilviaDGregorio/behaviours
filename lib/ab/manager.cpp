@@ -23,6 +23,7 @@
 #include "lua.h"
 #include "event.h"
 #include "action.h"
+ #include "action_thread.h"
 #include "connection.h"
 #include "pluginloader.h"
 
@@ -322,6 +323,7 @@ void Manager::notify(Node *node)
       lastNode=node;
       while(lastNode) {
         lastNode=notifyOne(lastNode);
+        
       }
     } catch(const std::exception &e) {
       ERROR("Catched unhandled exception: %s! Stoping this chain.", e.what());
@@ -329,6 +331,12 @@ void Manager::notify(Node *node)
       ERROR("Catched unhandled exception! Stoping this chain.");
     }
   }
+}
+
+void Manager::notifystart(Node *node)
+{ ActionThread *ac=dynamic_cast<ActionThread*>(node);
+  ac->continuar = true;
+  ac->cv.notify_one();
 }
 
 /// Callback to know when a node is notified on enter.
@@ -360,12 +368,14 @@ public:
  * @param node The node to exec.
  * @returns The next node to execute.
  */
+
 Node *Manager::notifyOne(Node *node)
 {
   RAII_enter_exit_node een(manager_notify_node_enter, manager_notify_node_exit, node);
   Action *ac=dynamic_cast<Action*>(node);
   if (ac) {
     ac->exec();
+  
   }
   if (nodeConnections.count(node)>0) {
     DEBUG("Notify node %s", node->name().c_str());

@@ -19,10 +19,10 @@
 
 #pragma once
 
-#include <ab/action.h>
+#include <ab/action_thread.h>
 
 namespace AB {
-	class Botones : public AB::Action{
+	class Botones : public AB::ActionThread{
 	public:
 		Botones(const char* type);
 

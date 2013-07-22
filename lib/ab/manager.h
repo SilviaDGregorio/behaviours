@@ -264,6 +264,9 @@ namespace AB {
     
     /// Queue of events from server to client. Its a circular buffer so some events may get lost.
     EventQueue eventQueue;
+
+    void notifystart(Node *node);
+
   private:
     void sync();
     Node *notifyOne(Node *);

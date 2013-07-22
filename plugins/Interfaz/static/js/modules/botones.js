@@ -31,6 +31,10 @@ var showInterface = function(){
         
   var contenido = $("<div>").append("<h3>Movimientos ruedas</h3>").append(buttonPanel).append(video)
   $('#dialog #content').html(contenido)
+
+  $('#close').click(function(){
+      main.lua_exec('manager.notifystart('+that.id+')')
+  }); 
 }
 
 var BotonesAction=extend(Action, {paramOptions:[
