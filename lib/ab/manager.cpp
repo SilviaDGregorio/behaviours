@@ -310,7 +310,7 @@ void Manager::exec()
 
 
 void Manager::doNotify(Node* node){
-  thread_local Node * thread_lastNode;
+  Node * thread_lastNode;
   try {
       thread_lastNode=node;
       while(thread_lastNode) {
