@@ -308,6 +308,25 @@ void Manager::exec()
   DEBUG("Finished execution of behaviour");
 }
 
+
+void Manager::doNotify(Node* node){
+  thread_local Node * thread_lastNode;
+  try {
+      thread_lastNode=node;
+      while(thread_lastNode) {
+        thread_lastNode=notifyOne(thread_lastNode);
+        
+      }
+    } catch(const std::exception &e) {
+      ERROR("Catched unhandled exception: %s! Stoping this chain.", e.what());
+    } catch(...) {
+      ERROR("Catched unhandled exception! Stoping this chain.");
+    }
+  mutex_lastNode.lock();
+  lastNode = thread_lastNode;
+  mutex_lastNode.unlock();
+}
+
 /**
  * The pendingNotifications queue is checked for integrity before launching the new node notification to check its still
  * valid.
@@ -319,17 +338,8 @@ void Manager::notify(Node *node)
     std::lock_guard<std::mutex> l(pendingNotificationsMutex);
     pendingNotifications.push(node);
   } else {
-    try {
-      lastNode=node;
-      while(lastNode) {
-        lastNode=notifyOne(lastNode);
-        
-      }
-    } catch(const std::exception &e) {
-      ERROR("Catched unhandled exception: %s! Stoping this chain.", e.what());
-    } catch(...) {
-      ERROR("Catched unhandled exception! Stoping this chain.");
-    }
+    std::thread t(&Manager::doNotify,this,node);
+    t.detach();
   }
 }
 
