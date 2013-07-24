@@ -24,7 +24,7 @@
 using namespace AB;
 
 
-Botones::Botones(const char* type): ActionThread(type)
+Botones::Botones(const char* type): BlockingAction(type)
 {
 	arriba = "";
 	abajo = "";
@@ -92,6 +92,6 @@ AB::AttrList Botones::attrList()
 
 void Botones::exec()
 {
-  AB::ActionThread::exec();
+  AB::BlockingAction::exec();
 	INFO(" Exec botones %p",this);
 }

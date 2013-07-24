@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
 
-#ifndef AB_ACTION_THREAD_H
-#define AB_ACTION_THREAD_H
+#ifndef AB_BLOCKING_ACTION_H
+#define AB_BLOCKING_ACTION_H
 
 #include <string>
 #include <condition_variable>
@@ -27,18 +27,18 @@
 
 namespace AB {
   /**
-   * @short An actionThread that may be performed.
+   * @short A BlockingAction that may be performed.
    *
    * This class must be subclassed by users to add actions to perform.
    */
-  class ActionThread : public Action {
+  class BlockingAction : public Action {
   public:
-    ActionThread(const char *type) : Action(type) {}
+    BlockingAction(const char *type) : Action(type) {}
 
     /**
-     * @short Executes the actionThread itself.
+     * @short Executes the BlockingAction itself.
      *
-     * For example if the actionThread is to play some audio file, do the necesary to play it.
+     * For example if the BlockingAction is to play some audio file, do the necesary to play it.
      */
     virtual void exec() {
       continuar = false;

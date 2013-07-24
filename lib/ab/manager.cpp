@@ -23,7 +23,7 @@
 #include "lua.h"
 #include "event.h"
 #include "action.h"
- #include "action_thread.h"
+ #include "blockingaction.h"
 #include "connection.h"
 #include "pluginloader.h"
 
@@ -344,7 +344,7 @@ void Manager::notify(Node *node)
 }
 
 void Manager::notifystart(Node *node)
-{ ActionThread *ac=dynamic_cast<ActionThread*>(node);
+{ BlockingAction *ac=dynamic_cast<BlockingAction*>(node);
   ac->continuar = true;
   ac->cv.notify_one();
 }
