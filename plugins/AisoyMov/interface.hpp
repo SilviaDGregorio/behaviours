@@ -20,10 +20,20 @@
 #pragma once
 
 #include <ab/action.h>
-
+ 
 class Interface : public AB::Action{
 public:
 	Interface(const char* type);
+
+	virtual void setAttr(const std::string& name, AB::Object obj);
+    virtual AB::Object attr(const std::string& name);
+    virtual AB::AttrList attrList();
 	
 	virtual void exec();
+private:
+	std::string forwards;
+	std::string backwards;
+	std::string left;
+	std::string right;
+	std::string name;
 };

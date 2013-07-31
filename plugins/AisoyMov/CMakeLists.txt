@@ -6,6 +6,6 @@ install(TARGETS AisoyMov
 	LIBRARY DESTINATION lib/ab
 	)
 	
-install(DIRECTORY static/nodes
+install(DIRECTORY static/nodes static/js
 	DESTINATION share/ab/static/AisoyMov
 	)
