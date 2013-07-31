@@ -19,10 +19,10 @@
 
 #pragma once
 
-#include <ab/action.h>
+#include <ab/blockingaction.h>
 
 namespace AB {
-	class Botones : public AB::Action{
+	class Botones : public AB::BlockingAction{
 	public:
 		Botones(const char* type);
 
