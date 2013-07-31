@@ -17,7 +17,7 @@ Creating a new plugin
 
 ### Directory tree ###
 
-In order to create a plugin in behaviours, you have to follow a given directory structure:
+In order to create a plugin in behaviours, you have to follow a specific directory structure:
 
 Inside the `plugins` directory, create another directory named as the plugin. In this directory, create the C++ files and a `static` folder with three subfolders:
 
