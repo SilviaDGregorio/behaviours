@@ -1,0 +1,8 @@
+<node-description id="interface">
+	<name lang="en">Interface</name>
+	<description lang="en">Just shows a message on console</description>
+
+	<type>action</type>
+	<icon>test</icon>
+	<js>interface.js</js>
+</node-description>
