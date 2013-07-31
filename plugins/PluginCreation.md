@@ -209,12 +209,12 @@ In the CMakeLists.txt file in the plugin folder we look for the libraries and so
 	    )
 	    
 	install(DIRECTORY static/nodes static/img static/js
-	    DESTINATION shared/ab/static/Example
+	    DESTINATION share/ab/static/Example
 	    )
 
 The instruction `SET(SOURCES example.cpp another_source_example.cpp)` stores the C++ code files that the plugin will use. After that we look for the python library and its headers.
 
-At last, we create a library that will contain the plugin, besides adding the linking options for compiling and the install paths of binaries (in lib/ab) and the three elements in the static folder (in shared/ab/static/example).
+At last, we create a library that will contain the plugin, besides adding the linking options for compiling and the install paths of binaries (in lib/ab) and the three elements in the static folder (in share/ab/static/example).
 
 ### Compilation and execution orders ###
 

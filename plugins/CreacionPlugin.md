@@ -213,13 +213,13 @@ Un ejemplo de CMakeLists.txt puede ser:
 	    )
 	    
 	install(DIRECTORY static/nodes static/img static/js
-	    DESTINATION shared/ab/static/Ejemplo
+	    DESTINATION share/ab/static/Ejemplo
 	    )
 
 La instrucción `SET(SOURCES ejemplo.cpp otro_fuente_ejemplo.cpp)` guarda los ficheros de código C++ que utilizará el plugin.
 Después se busca la librería de python y los archivos de cabecera de la misma.
 
-Por último, se crea la librería que contendrá el plugin, además de añadir las opciones de enlazado para el compilador, y se indica las rutas de instalación de los binarios (en lib/ab) y de los tres elementos de la carpeta static (en shared/ab/static/Ejemplo).
+Por último, se crea la librería que contendrá el plugin, además de añadir las opciones de enlazado para el compilador, y se indica las rutas de instalación de los binarios (en lib/ab) y de los tres elementos de la carpeta static (en share/ab/static/Ejemplo).
 
 ### Órdenes de compilación y ejecución ###
 

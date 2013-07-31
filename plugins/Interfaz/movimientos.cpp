@@ -139,7 +139,7 @@ void AB::Interfaz::python2_init(){
 	
 	PyEval_InitThreads();
 	
-	FILE *init_fd=fopen( AB_PREFIX "/shared/ab/Interfaz/__init__.py", "ro" );
+	FILE *init_fd=fopen( AB_PREFIX "/share/ab/Interfaz/__init__.py", "ro" );
 	if (!init_fd){
 		ERROR("Could not execute __init__ to set p a proper python2 environment");
 	}

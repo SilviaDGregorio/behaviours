@@ -14,9 +14,9 @@ install(TARGETS Interfaz
 	)
 	
 install(DIRECTORY static/nodes static/img static/js
-	DESTINATION shared/ab/static/Interfaz
+	DESTINATION share/ab/static/Interfaz
 	)
 
 install(FILES __init__.py
-	DESTINATION shared/ab/Interfaz
+	DESTINATION share/ab/Interfaz
 	)
