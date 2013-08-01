@@ -23,10 +23,6 @@
 
 using namespace AB;
 
-void ab_init(void){
-	DEBUG("Loaded ab init at basic example");
-	AB::Factory::registerClass<Interface>("interface");
-}
 
 Interface::Interface(const char* type): Action(type)
 {

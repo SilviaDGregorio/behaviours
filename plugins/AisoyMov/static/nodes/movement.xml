@@ -1,0 +1,23 @@
+<node-descriptions>
+<node-description id="forward">
+		<name lang="en">Forward</name>
+		<description lang="en">Executes some movement code</description>
+		
+		<type>action</type>
+		<icon>test</icon>
+		
+		<icon src="python2action.png"/>
+		
+		<params>
+			<param id="code">
+				<type>text</type>
+				<description lang="en">Code to be executed on action</description>
+			</param>
+		</params>
+
+		<js>modules/movement.js</js>
+		<js>extra/codemirror.js</js>
+		<js>extra/codemirror_python.js</js>
+
+	</node-description>
+</node-descriptions>
