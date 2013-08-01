@@ -1,4 +1,4 @@
-    (function()
+(function()
     {
 
 	var InterfaceAction=extend(Action, {paramOptions:[

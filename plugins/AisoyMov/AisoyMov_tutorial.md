@@ -1,7 +1,7 @@
 # Tutorial
 # How to make a behaviours plugin
 
-This tutorial follows the steps you should take to create a new plugin in behaviours, having as a reference the plugin "AisoyMov" that we created. This plugin creates an interface to control the movement of [Aisoy1](www.aisoy.es)
+This tutorial follows the steps you should take to create a new plugin in behaviours, having as a reference the plugin "AisoyMov" that we created. This plugin creates an interface to control the movement of [Aisoy1](www.aisoy.es).
 
 ## Boilerplate: taking the basic plugin
 
@@ -46,6 +46,49 @@ The client side of the plugin is a XML file with the interface definition:
 
 As we can see, *ab_init* registers the *Interface* class and links it with the node with id *interface*.
 
+The next thing we want to do is compile the plugin to check that everything is fine.
+
+## Compiling
+
+*Behaviours* uses `CMake` to create the compiling system. To make it work, we need to create a file named *CMakeLists.txt* in the root of our plugin. This file tells CMake the sources, libraries and installation paths that the plugin needs.
+
+```cmake
+SET(SOURCES interface.cpp)
+
+add_library(AisoyMov SHARED ${SOURCES})
+
+install(TARGETS AisoyMov 
+	LIBRARY DESTINATION lib/ab
+)
+	
+install(DIRECTORY static/nodes static/js static/img
+	DESTINATION share/ab/static/AisoyMov
+)
+```
+
+Notice that we have added *static/js* and *static/img* to the install path. We will need them later to add javascript and images to our nodes.
+
+Once we have this file created, we need to add our plugin to the *plugins* CMakeLists file:
+
+```cmake
+# plugins/CMakeLists.txt
+
+add_subdirectory(basic)
+add_subdirectory(python2)
+add_subdirectory(AisoyMov)
+
+```
+
+And we can compile everything following the normal compilation instructions from [behaviours](https://github.com/davidmoreno/behaviours):
+
+```bash
+$ mkdir build
+$ cd build
+$ cmake ..
+$ make 
+$ make install
+```
+
 Now we are ready for adding some extra behaviour to the plugin.
 
 ## Adding Javascript
@@ -57,8 +100,6 @@ To have a plugin that actually does anything, we need to link a Javascript file 
 ```
 
 While the Javascript file is empty, the plugin works exactly the same, so we are going to add something to it.
-
-Remember also to add the js folder to *CMakeLists.txt*, as we will cover in the [] section
 
 We can overwrite our current XML file just by writing a couple of lines in *interface.js*:
 
@@ -222,12 +263,29 @@ Each attribute in *paramOptions* should have, at least, the following items:
 
 If we want the node to have an icon, we must store a PNG file named as the node id in the folder *static/img*. In our node, it will be *static/img/interface.png*. A good size for the icon is 32x32 pixels.
 
-Remember also to add the img folder to *CMakeLists.txt*, as we will cover in the [] section
-
 ## Adding movement nodes
+
+The movement nodes are actions that will execute a python code. This code is predefined and will tell the wheels to go forward, backward, left or right.
+
+To do this, we can use part of the *python2* plugin, so that it works exactly as a python2 plugin, but predefining our code.
+
+
+
+----
+create movement.cpp -> copy everything from python and modify to fit --> python2_init change name
+
+copypaste movement.hpp
+
+copypaste ab_module.cpp, __init__.py, Nodes.py
+
+CMakeLists
+
+create xml
+
+create movement.js
+
+copypaste js/extras/codemirror
+
+
+
 ## BlockingAction
-## CMakeLists
-
-Add it to the plugins/CMakeLists.txt 
-
-##### Hay que hacer un diff para ver los cambios exactos en el CMakeLists
