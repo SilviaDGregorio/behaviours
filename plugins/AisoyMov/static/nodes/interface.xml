@@ -5,6 +5,6 @@
 
 		<type>action</type>
 		<icon>test</icon>
-		<js>interface.js</js>
+		<js>modules/interface.js</js>
 	</node-description>
 </node-descriptions>
