@@ -11,7 +11,7 @@ install(TARGETS AisoyMov
 	LIBRARY DESTINATION lib/ab
 	)
 	
-install(DIRECTORY static/nodes static/js
+install(DIRECTORY static/nodes static/js static/img
 	DESTINATION share/ab/static/AisoyMov
 	)
 install(FILES __init__.py

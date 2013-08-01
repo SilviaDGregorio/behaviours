@@ -58,6 +58,8 @@ To have a plugin that actually does anything, we need to link a Javascript file 
 
 While the Javascript file is empty, the plugin works exactly the same, so we are going to add something to it.
 
+Remember also to add the js folder to *CMakeLists.txt*, as we will cover in the [] section
+
 We can overwrite our current XML file just by writing a couple of lines in *interface.js*:
 
 ```js
@@ -208,11 +210,19 @@ var InterfaceAction=extend(Action, {paramOptions:[
     {type:String,text:'name',name:'name',default:"Interface"}
   ]})
 ```
+The last attribute should be the name because the system uses the value of the last parameter as name.
+
 Each attribute in *paramOptions* should have, at least, the following items:
 * `type`: can be Array, Number, Text or any other thing. If it is one of the predefined types, the default configuration menu will show a predefined look (if it is an Array, a dropdown; if it is a Number, a slider; and if it is a Text, a textarea). If the type is not one of the predefined ones, it will show a simple textbox.
 * `text`: name of the parameter that will be shown in the configuration menu.
 * `name`: name of the parameter that the server expects.
 * `default`: default value of the parameter.
+
+## Icons
+
+If we want the node to have an icon, we must store a PNG file named as the node id in the folder *static/img*. In our node, it will be *static/img/interface.png*. A good size for the icon is 32x32 pixels.
+
+Remember also to add the img folder to *CMakeLists.txt*, as we will cover in the [] section
 
 ## Adding movement nodes
 ## BlockingAction
