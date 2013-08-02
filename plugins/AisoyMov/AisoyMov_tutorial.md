@@ -270,21 +270,286 @@ The movement nodes are actions that will execute a python code. This code is pre
 To do this, we can use part of the *python2* plugin, so that it works exactly as a python2 plugin, but predefining our code.
 
 
+Para realizar los movimientos debemos crear como hemos hecho con la Interfaz, una serie de ficheros con el comportamiento de nuestro nuevo nodo. Para entender mejor como funciona crearemos uno de los de movimiento explicando paso a paso como se realiza.
+
+Lo primero de todo es crear los ficheros movement.cpp y movement.hpp donde tendremos la gestión de nuestro nodo.
+Además de las funciones de creación del nodo tanto el de la interfaz como el de los movimientos. Para ello utilizaremos un fichero ab_module.cpp , _init_.py y nodes.py que que crean las funcionalidades de nuestro nodo. Son necesarias para el funcionamiento de nuestro plugin.
+Se debe copiar y pegar estos tres ficheros en el directorio de nuestro plugin y en ab_module.cpp incluir la librería de nuestro plugin.
+	
+	//ab_module.cpp
+	#include "movement.hpp"
+
+Una vez hecho esto, pasamos a configurar el movement.cpp y el movement.hpp:
+
+	//movement.hpp
+	#pragma once
+
+	#include <Python.h>
+	#include <ab/object.h>
+
+	namespace AB{
+		namespace Interfaz{
+			PyObject *object2pyobject(AB::Object &obj);
+			Object to_object(PyObject *obj);
+		}
+	}
+
+	//movement.cpp
+	#include <ab/action.h>
+	#include <ab/event.h>
+	#include <ab/factory.h>
+	#include <ab/manager.h>
+	#include "movement.hpp"
+	#include "interface.hpp"
+
+
+
+	namespace AB{
+
+		class Forward : public Action{
+			std::string code;
+			std::string nombre;
+			std::string code_default;
+			PyObject *compiled_code;
+		public:
+			Forward(const char* type);
+	    virtual ~Forward();
+			virtual void exec();
+			
+	    virtual AttrList attrList();
+	    virtual Object attr(const std::string& name);
+	    virtual void setAttr(const std::string& name, Object obj);
+			
+	    virtual void setManager(Manager* manager);
+		};
+
+		namespace Interfaz{
+			PyObject *globals;
+			PyObject *PyInit_ab(void);
+			void python2_init();
+			Manager *ab_module_manager=NULL;
+		}
+	}
+Hemos creado nuestra clase Forward que será uno de los movimientos que tiene nuestro plugin. Además utilizamos Interfaz que se comunicará con ab_module.cpp para la creación de nodo.
+
+	void python2_interpreter(FILE *fd){
+		sleep(5);
+		PyRun_InteractiveLoopFlags(fd, "__stdin__", (PyCompilerFlags*)NULL);
+	}
+	void ab_init(void){
+		DEBUG("Loaded python2 plugin");
+
+		AB::Factory::registerClass<AB::Forward>("forward");
+
+		AB::Factory::registerClass<Interface>("interface");
+
+		AB::Interfaz::python2_init();
+		
+		//new boost::thread(python2_interpreter, stdin);
+	}
+	void ab_finalize(void){
+		Py_Finalize();
+	}
+
+
+
+	using namespace AB;
+	using namespace AB::Interfaz;
+
+	void AB::Interfaz::python2_init(){
+		//TODO PyImport_AppendInittab("ab",PyInit_ab);
+		//TODO Py_SetProgramName("behaviours");
+		Py_Initialize();
+		PyInit_ab();
+		
+		globals=PyDict_New();
+		PyDict_SetItemString(globals, "__builtins__", PyEval_GetBuiltins());	
+		
+		PyEval_InitThreads();
+		
+		FILE *init_fd=fopen( AB_PREFIX "/share/ab/AisoyMov/__init__.py", "ro" );
+		if (!init_fd){
+			ERROR("Could not execute __init__ to set p a proper python2 environment");
+		}
+		else{
+			PyObject *init_ret=PyRun_File(init_fd, "__init__.py", Py_file_input, globals, globals);
+			Py_XDECREF(init_ret);
+			
+			fclose(init_fd);
+		}
+	}
+
+	Forward::Forward(const char* type): Action(type)
+	{
+		//Inicialización de las variables
+	}
+
+	Forward::~Forward()
+	{
+		Py_XDECREF(compiled_code);
+	}
+
+	void Forward::exec()
+	{
+		if (code.size()==0)
+			return;
+		
+		PyObject *locals=PyDict_New();
+		Py_INCREF(globals);
+		
+		auto o=to_object(this) ;
+		PyDict_SetItemString(locals, "self", object2pyobject( o ));
+		
+		PyObject *obj=PyEval_EvalCode( (PyCodeObject*)compiled_code, globals, locals);
+		if (!obj)
+			PyErr_Print();
+		else{
+			PyObject_Print(obj, stdout, Py_PRINT_RAW);
+			Py_DECREF(obj);
+		}
+		Py_DECREF(globals);
+		Py_DECREF(locals);
+	}
+
+	AttrList Forward::attrList()
+	{
+		auto attr=AB::Node::attrList();
+		attr.push_back("code");
+		attr.push_back("nombre");
+		attr.push_back("code_default");
+		return attr;
+	}
+
+	Object Forward::attr(const std::string& name)
+	{
+		if (name == "nombre")
+		{
+			return to_object(nombre);
+		}
+		else if(name == "code_default"){
+			return to_object(code_default);
+		}
+		else //if(name=="code"){
+			return to_object(code);
+		
+	}
+
+	void Forward::setAttr(const std::string& name, Object obj)
+	{
+		if (name=="code"){
+			code=object2string(obj);
+			Py_XDECREF(compiled_code);
+			compiled_code=Py_CompileString(code.c_str(), this->name().c_str(), Py_file_input);
+			if (!compiled_code)
+				PyErr_Print();
+		}
+		else if (name == "nombre")
+		{
+			nombre=object2string(obj);
+		}
+		else if( name =="code_default"){
+			code_default=object2string(obj);
+		}
+		else
+			return Action::setAttr(name, obj);
+	}
+
+	void Forward::setManager(Manager* manager)
+	{
+		AB::Node::setManager(manager);
+		AB::Interfaz::ab_module_manager=manager;
+	}
+
+
+Seguidamente, necesitamos crear el XML con la definición de nuestro nuevo nodo. Vamos a crear el fichero movement.xml dentro de static/nodes
+
+	//movement.xml
+	<node-description id="forward">
+		<name lang="en">Forward</name>
+		<description lang="en">Executes some movement code</description>
+		
+		<type>action</type>
+		<icon>test</icon>
+		
+		<icon src="python2action.png"/>
+		
+		<params>
+			<param id="code">
+				<type>text</type>
+				<description lang="en">Code to be executed on action</description>
+			</param>
+		</params>
+
+		<js>modules/movement.js</js>
+		<js>extra/codemirror.js</js>
+		<js>extra/codemirror_python.js</js>
+
+	</node-description>
+
+Donde debemos de tener especial cuidado en el nombre que le pongamos como id, ya que tiene que ser el mismo que le hayamos puesto en el .cpp cuando creamos el nodo en ab_init(void).
+Como podemos ver, hemos utilizado varios javascript para nuestro forward que no utilizabamos en interfaz.
+Uno de ellos es el propio de nuestro nodo. Codemirror.js y codemirror_python.js los utilizamos en la ventana que incorporará nuestro forward donde podremos escribir código en python. El codemirror.js ya está integrado en nuestro behaviours, pero el codemirror_python.js debemos de copiarlo en la carpeta extras/ de nuestro directorio.
+El javascript que nos queda por comentar, es el propio de nuestro nodo. La plantilla sería la misma que en interfaz, pudiendo poner en function todo lo que nuestro nodo debe hacer.
+
+	(function(){
+
+			//Código para implementar la ventana de código
+
+		var Forward=extend(Action, {paramOptions: [{type:Text,text:current_language.python_action_msg,default:print(hola)"},{type:String,text:'nombre',name:'nombre',show:true,default:"Forward"}]})
+		Forward.prototype.configure=python_configure
+		Forward.prototype.acceptConfigure=python_accept_configure
+		main.behaviour.nodeFactory.add('forward',Forward)//Poner el mismo nombre utilizado en .cpp y en el xml "forward"
+	}
+
+
+Una vez realizados los pasos anteriores necesitamos modificar nuestro CMakeList.txt añadiendo los cambios. Para ello añadimos los dos nuevos .cpp que hemos creado y la ruta de enlace del _init_ y python.
+
+	//CMakeList.txt
+	SET(SOURCES interface.cpp movement.cpp ab_module.cpp )
+	find_library(PYTHON2_LIB NAMES python2.7 PATH ${LIBPATH})
+	find_path(PYTHON2_HEADER Python.h ${CMAKE_INCLUDE_PATH} /usr/include/python2.7)
+	add_library(AisoyMov SHARED ${SOURCES})
+
+	target_link_libraries(AisoyMov ${PYTHON2_LIB})
+	include_directories(${PYTHON2_HEADER})
+	link_directories(${PYTHON2_LIB})
+
+	install(TARGETS AisoyMov 
+		LIBRARY DESTINATION lib/ab
+		)
+		
+	install(DIRECTORY static/nodes static/js static/img
+		DESTINATION share/ab/static/AisoyMov
+		)
+	install(FILES __init__.py
+		DESTINATION share/ab/AisoyMov
+		)
+
+
+
+
+
+
+
+
+
+
+
 
 ----
-create movement.cpp -> copy everything from python and modify to fit --> python2_init change name
+Xcreate movement.cpp -> copy everything from python and modify to fit --> python2_init change name
 
-copypaste movement.hpp
+Xcopypaste movement.hpp
 
-copypaste ab_module.cpp, __init__.py, Nodes.py
+Xcopypaste ab_module.cpp, __init__.py, Nodes.py
 
 CMakeLists
 
-create xml
+Xcreate xml
 
-create movement.js
+Xcreate movement.js
 
-copypaste js/extras/codemirror
+Xcopypaste js/extras/codemirror
 
 
 
