@@ -281,10 +281,11 @@ void Manager::sync()
 void Manager::exec()
 {
    Event::p ev;
-  int alwaysExec=11;
   DEBUG("Start execution of behaviour");
   execThreadId=std::this_thread::get_id();
   int t=0;
+  int contains=0;
+  std::string type="";
   running_=true;
 	syncOnNextCycle=true;
   while(running_) {
@@ -295,13 +296,16 @@ void Manager::exec()
       //DEBUG("Check %s %d", ev->name().c_str(), ev->flags());
       ev=std::dynamic_pointer_cast<Event>(n);
       if (ev->flags()&Event::Polling) {
-        DEBUG("Event with name: %s and Cont: %d and noderepeat: %d",ev->name().c_str(),ev->cont,ev->noderepeat);
-        if(ev->noderepeat!=alwaysExec && ev->name().find("__alarm_manager__")<0 && ev->cont ==ev->noderepeat){
+        type=std::string(ev->type());
+        contains=type.find("manager");
+        DEBUG("Event with name: %s and Cont: %d and noderepeat: %d and contains manager? %d",ev->name().c_str(),ev->cont,ev->noderepeat,contains);
+        /*if( ev->cont == ev->noderepeat and contains<=0){
           DEBUG("Event %s is removed!", ev->name().c_str());
             ev->cont=0;
+            
             Object newob= to_object(1);
             ev->setAttr("nodeon",newob);
-        }
+        }*/
         if (ev->check()) {
 
           DEBUG("Event %s is triggered!", ev->name().c_str());
