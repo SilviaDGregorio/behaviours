@@ -27,8 +27,8 @@
  		AB::Manager *manager;
  		AB::Event::p event;
  		Start(const char* type = "start") : Event(type), manager(nullptr) { setFlags(Polling|NeedSync); 
- 			nodeon=0;
- 			noderepeat=0;
+
+
 
  		}
 		virtual	void setManager(Manager* m)
@@ -45,20 +45,11 @@
  		}
  		virtual void setAttr(const std::string &k, Object s);
  		virtual Object attr(const std::string &key){
- 			if (key == "nodeon") {
- 				return to_object(nodeon);
- 			}
- 			if(key =="noderepeat"){
- 				return to_object(noderepeat);
- 			}
  			return Event::attr(key);
  		}
  		virtual AttrList attrList(){
  			AttrList l=Event::attrList();
- 			l.push_back("nodeon");
- 			l.push_back("noderepeat");
  			return l;
-
  		}
  	};
  }

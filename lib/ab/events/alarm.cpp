@@ -35,9 +35,7 @@ Alarm::Alarm(const char *type) : Event(type), manageralarm(nullptr)
   hour = 0; //0-23
   minute = 0; // 0-59
   repeatPolicy = Never;
-  nodeon=0;
-  noderepeat=0;
-  cont=0;
+
 }
 
 void Alarm::setAttr(const std::string &k, const AB::Object s)
@@ -67,37 +65,6 @@ void Alarm::setAttr(const std::string &k, const AB::Object s)
     DEBUG("alarm repeat policy requested: %d", (int)repeatPolicy);
     return;
   }
- else if(k== "nodeon"){
-        nodeon = object2int(s);  
-        DEBUG("%d",nodeon );
-        if(nodeon==0){
-          
-          if(manageralarm){
-            WARNING("Va a introducir el evento");        
-            if(!manageralarm->findNode(this->name())){
-              WARNING("Mete el evento");
-              manageralarm->addEvent(event);
-            }
-          }
-        }
-        else{
-          if(manageralarm){
-            if(manageralarm->findNode(this->name())){
-              WARNING("Borra el evento");
-              event=manageralarm->getEvent(this->name());
-              manageralarm->removeEvent(this->name());
-            }
-          }
-        }
-              
-        DEBUG("start nodeon requested: %d", nodeon);
-        return;
-      }
-      else if(k== "noderepeat"){
-        noderepeat = object2int(s);
-        DEBUG("start noderepeat requested: %d", noderepeat);
-        return;
-      }
   Event::setAttr(k,s);
 }
 
@@ -121,12 +88,7 @@ AB::Object Alarm::attr(const std::string &key)
   if (key == "repeat") {
     return to_object((int)repeatPolicy);
   }
-  if (key == "nodeon") {
-    return to_object(nodeon);
-  }
-  if(key =="noderepeat"){
-    return to_object(noderepeat);
-  }
+
   return Event::attr(key);
 }
 
@@ -139,8 +101,6 @@ AttrList Alarm::attrList()
   l.push_back("month");
   l.push_back("year");
   l.push_back("repeat");
-  l.push_back("nodeon");
-  l.push_back("noderepeat");
   return l;
 }
 
@@ -164,7 +124,7 @@ AlarmManager::AlarmManager() : Event("touch"), manager(NULL)
   setFlags(AB::Event::Polling);
   setName("__alarm_manager__");
   triggered=false;
-  noderepeat=11;
+
 }
 
 
@@ -204,7 +164,6 @@ bool AlarmManager::check()
 
 bool AlarmManager::checkAlarm(time_t rawtime)
 {
-  int alwaysExec=11;
   struct tm * timeinfo = localtime ( &rawtime );
 
   if (!timeinfo || (timeinfo && rawtime == lastAlarm && triggered))
@@ -218,7 +177,7 @@ bool AlarmManager::checkAlarm(time_t rawtime)
    Alarm::p tev=std::dynamic_pointer_cast<Alarm>(ev);
 
     if (tev && tev->getHour() == timeinfo->tm_hour && tev->getMinute() == timeinfo->tm_min ) {
-      DEBUG("%d",tev->getNodeon());
+     
 
         switch((int)tev->getRepeatPolicy()) {
         
@@ -226,14 +185,7 @@ bool AlarmManager::checkAlarm(time_t rawtime)
   	  
   	  if (tev->getDay() == timeinfo->tm_mday && 
   	      tev->getMonth() == timeinfo->tm_mon && 
-  	      tev->getYear() == timeinfo->tm_year ) {
-          if(tev->noderepeat!=alwaysExec &&  tev->cont ==tev->noderepeat){
-            DEBUG("Event %s is removed!", tev->name().c_str());
-            
-            Object newob= to_object(1);
-            tev->setAttr("nodeon",newob);
-        }
-          tev->cont++;                
+  	      tev->getYear() == timeinfo->tm_year ) {               
   	    manager->notify(tev);	    
   	    triggered = true;
   	  }

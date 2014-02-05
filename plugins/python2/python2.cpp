@@ -179,7 +179,7 @@ void Python2Action::setManager(Manager* manager)
 
 Python2Event::Python2Event(const char* type): Event(type)
 {
-	cont=0;
+
 	code="";
 	setFlags(flags()|AB::Event::Polling);
 	compiled_code=NULL;
@@ -192,7 +192,7 @@ Python2Event::~Python2Event()
 
 bool Python2Event::check()
 {
-	cont++;
+
 	DEBUG("Check");
 	if (!compiled_code)
 		return false;
@@ -220,20 +220,12 @@ AttrList Python2Event::attrList()
 {
 	auto attr=AB::Node::attrList();
 	attr.push_back("code");
-	attr.push_back("nodeon");
-  	attr.push_back("noderepeat");
 	return attr;
 }
 
 Object Python2Event::attr(const std::string& name)
 {
-	
-	if (name == "nodeon") {
-        return to_object(nodeon);
-    }
-    if(name =="noderepeat"){
-        return to_object(noderepeat);
-    }
+
     return to_object(code);
 }
 
@@ -246,37 +238,7 @@ void Python2Event::setAttr(const std::string& name, Object obj)
 		if (!compiled_code)
 			PyErr_Print();
 	}
-	else if(name== "nodeon"){
-        nodeon = object2int(obj);  
-        printf("%d\n",nodeon );
-        if(nodeon==0){
-          
-          if(manager){
-            WARNING("Va a introducir el evento");        
-            if(!manager->findNode(this->name())){
-              WARNING("Mete el evento");
-              manager->addEvent(event);
-            }
-          }
-        }
-        else{
-          if(manager){
-            if(manager->findNode(this->name())){
-              WARNING("Borra el evento");
-              event=manager->getEvent(this->name());
-              manager->removeEvent(this->name());
-            }
-          }
-        }
-              
-        DEBUG("python2 nodeon requested: %d", nodeon);
-        return;
-      }
-      else if(name== "noderepeat"){
-        noderepeat = object2int(obj);
-        DEBUG("python2 noderepeat requested: %d", noderepeat);
-        return;
-      } 
+
 	else
 		return Event::setAttr(name, obj);
 }

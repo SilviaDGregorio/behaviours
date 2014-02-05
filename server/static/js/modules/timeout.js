@@ -52,34 +52,6 @@ require(['node','jquery','main'],function(node, $, main){
 
 
 
-
-        for(var i=1;i<4;i++){
-         var li=$('<li>')
-         ul.append(li)
-         if(i==1)
-          li.text("Activate event")
-        else if(i==2)
-          li.text("Times repeat event")
-        else
-          li.text("Activate ways")
-        var cb=$('<select>')
-        for (var j in p[i].values){
-          var opt=$('<option>')
-          opt.append(p[i].values[j])
-          opt.attr('value',j)
-          cb.append(opt)
-        }
-        cb.change(function(){
-          that.realtime_update_base()
-        })
-        cb.attr('id',i)
-        cb.val(this.params[p[i].name])
-        li.append(cb)
-
-      }
-
-
-
       $('#dialog #title').html(current_language.configuration_of+this.type+' <span class="name">(object id '+this.id+')</span>')
       $('#dialog #content').html(ul)
       $('#dialog #content #0 .ui-slider-handle').css('left',slidervalue+'%')
@@ -115,34 +87,6 @@ require(['node','jquery','main'],function(node, $, main){
               if(p[i].name=="timeout"){
                $('#dialog #content #'+i+' .ui-slider-handle').css('left',val+'%')
              }
-             if(p[i].name=="nodeon"){
-              if(this.changeactivity==true){
-                val=this.changevalor
-                params[p[i].name]=val 
-                
-              }
-              if(val==0){
-                $("#"+this.id+" g").attr('fill','#aad400')
-                $("#"+this.id+" #legend").attr('fill','#000000')
-                $("#"+this.id+" #param").attr('fill','#000000')
-                $("#noderepeat"+this.id).attr('fill','#000000')                
-                $('image#nodeonoff'+this.id).attr('href','img/on.png')
-              }
-              else{
-                $("#"+this.id+" g").attr('fill','#C0C0C0')
-                $("#"+this.id+" #legend").attr('fill','#666666')
-                $("#"+this.id+" #param").attr('fill','#666666')
-                $("#noderepeat"+this.id).attr('fill','#666666')
-                $('image#nodeonoff'+this.id).attr('href','img/off.png')
-              }
-
-            }
-            if(p[i].name=="noderepeat"){
-              if(val==11)                            
-                $('text#noderepeat'+this.id).text("Always")              
-              else
-                $('text#noderepeat'+this.id).text(""+val)
-            }
           }
         }
       }
@@ -167,67 +111,6 @@ require(['node','jquery','main'],function(node, $, main){
         txt.push(t);
 
       }
-      if(this.id.indexOf(this.type)==-1){
-        if(this.paramOptions[i].name=="nodeon") {
-          if(!this.params[this.paramOptions[i].name]){
-             if(this.changeactivity==true){
-               var val=this.changevalor
-              
-                
-              }
-              if(val==0){
-                $("#"+this.id+" g").attr('fill','#aad400')
-                $("#"+this.id+" #legend").attr('fill','#000000')
-                $("#"+this.id+" #param").attr('fill','#000000')
-                $("#noderepeat"+this.id).attr('fill','#000000')                
-                $('image#nodeonoff'+this.id).attr('href','img/on.png')
-              }
-              else{
-                $("#"+this.id+" g").attr('fill','#C0C0C0')
-                $("#"+this.id+" #legend").attr('fill','#666666')
-                $("#"+this.id+" #param").attr('fill','#666666')
-                $("#noderepeat"+this.id).attr('fill','#666666')
-                $('image#nodeonoff'+this.id).attr('href','img/off.png')
-              }
-
-          }
-          else{
-          if(this.params[this.paramOptions[i].name]=="YES" || this.params[this.paramOptions[i].name]=="0"){
-            $("#"+this.id+" g").attr('fill','#aad400')
-            $("#"+this.id+" #legend").attr('fill','#000000')
-            $("#"+this.id+" #param").attr('fill','#000000')
-            $("#noderepeat"+this.id).attr('fill','#000000')                
-            $('image#nodeonoff'+this.id).attr('href','img/on.png')
-
-            
-          }   
-          else{
-              $("#"+this.id+" g").attr('fill','#C0C0C0')
-            $("#"+this.id+" #legend").attr('fill','#666666')
-            $("#"+this.id+" #param").attr('fill','#666666')
-            $("#noderepeat"+this.id).attr('fill','#666666')
-            $('image#nodeonoff'+this.id).attr('href','img/off.png')
-
-
-            
-          }
-        }
-        }
-        if(this.paramOptions[i].name=="noderepeat"){
-          if(this.params[this.paramOptions[i].name]==11)                            
-            $('text#noderepeat'+this.id).text("Always")              
-          else{
-            
-            var text=this.params[this.paramOptions[i].name];
-            if(!text){
-
-            }
-            else{
-              $('text#noderepeat'+this.id).text(""+this.params[this.paramOptions[i].name])
-            }
-          }
-        }
-      }
 
     }
 
@@ -240,9 +123,7 @@ require(['node','jquery','main'],function(node, $, main){
   }
 
   
-  var timeoutEvent=node.extend(node.Event, {paramOptions: [{type:Number,min:0.1,max:100,default:0.5,name:"timeout"},{type:Array,values:['YES','NO'],name:'nodeon'},
-   {type:Array,values:['Never','01','02','03','04','05','06','07','08','09','10','Always'],name:'noderepeat'},
-   {type:Array,values:['One','All'],name:'activate'}]})
+  var timeoutEvent=node.extend(node.Event, {paramOptions: [{type:Number,min:0.1,max:100,default:0.5,name:"timeout"}]})
 
 
 

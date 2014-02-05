@@ -30,29 +30,15 @@ Timeout::Timeout(const char* type) : Event(type), manager(nullptr)
   limit=-1;
   t=-1;
   n=0;
-  nodeon=0;
-  noderepeat=0;
-  cont=0;
-  activate=0;
 }
 
 Object Timeout::attr(const std::string& k)
 {
-  if (k=="count")
-    return to_object(n);
-  else if (k=="timeout")
+   if (k=="timeout")
     return to_object(limit);
   else if (k=="elapsed" || k=="t")
     return to_object(t);
-  else if (k == "nodeon") {
-    return to_object(nodeon);
-  }
-  else if(k =="noderepeat"){
-    return to_object(noderepeat);
-  }
-  else if(k =="activate"){
-    return to_object(activate);
-  }
+
   return Node::attr(k);
 }
 
@@ -61,11 +47,8 @@ AttrList Timeout::attrList()
   DEBUG("Get param list");
   AttrList l=Node::attrList();
   l.push_back("timeout");
-  l.push_back("count");
   l.push_back("elapsed");
-  l.push_back("nodeon");
-  l.push_back("noderepeat");
-  l.push_back("activate");
+
   return l;
 }
 
@@ -79,47 +62,7 @@ void Timeout::setAttr(const std::string& k, Object v)
   // read_only attribute
   // t=AB::object2float(v);
   // DEBUG("Set timeout elapsed to %f",limit);
-  } else if (k=="count" ) {
-  // read_only attribute
-  // n=AB::object2int(v);
-  // DEBUG("Set timeout count to %f",limit);
-  }
- else if(k== "nodeon"){
-        nodeon = object2int(v);  
-        DEBUG("%d",nodeon );
-        if(nodeon==0){
-          
-          if(manager){
-            WARNING("Va a introducir el evento");        
-            if(!manager->findNode(this->name())){
-              WARNING("Mete el evento");
-              manager->addEvent(event);
-            }
-          }
-        }
-        else{
-          if(manager){
-            if(manager->findNode(this->name())){
-              WARNING("Borra el evento");
-              event=manager->getEvent(this->name());
-              manager->removeEvent(this->name());
-            }
-          }
-        }
-              
-        DEBUG("timeout nodeon requested: %d", nodeon);
-        return;
-      }
-      else if(k== "noderepeat"){
-        noderepeat = object2int(v);
-        DEBUG("timeout noderepeat requested: %d", noderepeat);
-        return;
-      }
-      else if(k== "activate"){
-        activate = object2int(v);
-        DEBUG("timeout activate requested: %d", noderepeat);
-        return;
-      }
+}
    else {
     Node::setAttr(k,v);
   }
@@ -130,7 +73,6 @@ bool Timeout::sync()
 {
   DEBUG("Sync!");
   n=0;
-  cont=0;
   t=-1;
   return true;
 }
@@ -144,7 +86,6 @@ bool Timeout::check()
     float dt=(now.tv_sec-lastT.tv_sec) + float(now.tv_usec - lastT.tv_usec)/10000000.0;
     t+=dt;
     if (t>limit) {
-      cont++;
       n++;
       INFO("Time limit achieved! (count=%d, %f>%f)", n, t, limit);
       t=-1;

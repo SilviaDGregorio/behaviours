@@ -47,8 +47,6 @@ namespace AB {
     int getHour() { return hour; };
     int getMinute() { return minute; };
     Repeat getRepeatPolicy() { return repeatPolicy; };
-    int getNodeon(){return nodeon;}
-    int getNoderepeat(){return noderepeat;}
 
   private:
     int day;
@@ -76,7 +74,6 @@ namespace AB {
     bool checkAlarm(time_t rawtime);
     time_t lastAlarm;
     bool triggered;
-    int noderepeat;
     AB::Manager *manager;
   };
 };

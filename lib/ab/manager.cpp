@@ -152,10 +152,6 @@ Connection::p Manager::connect(Node::p A, Node::p B)
   if (std::dynamic_pointer_cast<AB::Event>(B))
     return NULL; // Trying to connect to an event is not allowed  
  conn=std::make_shared<Connection>(this, A, B); 
-  if(getEvent(B->name())!=NULL){
-    Object newob= to_object(1);
-    B->setAttr("nodeon",newob);
-  }
   nodeConnections[A].push_back(conn);
   syncOnNextCycle=true;
   return conn;
@@ -184,14 +180,6 @@ void Manager::disconnect(Node::p A, Node::p B){
 	std::vector<Connection::p> &conns=nodeConnections[A];
 	std::vector<Connection::p>::iterator I=conns.begin(), endI=conns.end();
   Event::p ev=std::dynamic_pointer_cast<Event>(B);
-
-  if(ev){
-        DEBUG("%s","A ver como queda desde nodo" );
-        DEBUG("%d", ev->nodeon); 
-        Object newob= to_object(0);
-        ev->setAttr("nodeon",newob);
-  }
-
 	for(;I!=endI;++I){
 		if ((*I)->to()==B){
 			Connection::p c=*I;
@@ -284,7 +272,6 @@ void Manager::exec()
   DEBUG("Start execution of behaviour");
   execThreadId=std::this_thread::get_id();
   int t=0;
-  int contains=0;
   std::string type="";
   running_=true;
 	syncOnNextCycle=true;
@@ -296,20 +283,9 @@ void Manager::exec()
       //DEBUG("Check %s %d", ev->name().c_str(), ev->flags());
       ev=std::dynamic_pointer_cast<Event>(n);
       if (ev->flags()&Event::Polling) {
-        type=std::string(ev->type());
-        contains=type.find("manager");
-        DEBUG("Event with name: %s and Cont: %d and noderepeat: %d and contains manager? %d",ev->name().c_str(),ev->cont,ev->noderepeat,contains);
-        /*if( ev->cont == ev->noderepeat and contains<=0){
-          DEBUG("Event %s is removed!", ev->name().c_str());
-            ev->cont=0;
-            
-            Object newob= to_object(1);
-            ev->setAttr("nodeon",newob);
-        }*/
+        type=std::string(ev->type());       
         if (ev->check()) {
-
-          DEBUG("Event %s is triggered!", ev->name().c_str());
-         
+          DEBUG("Event %s is triggered!", ev->name().c_str());         
           notify(ev);
         }
         if (syncOnNextCycle) // It will continue with the list, unless a sync (graph change) is performed.

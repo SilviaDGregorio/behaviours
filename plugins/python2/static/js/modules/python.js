@@ -164,40 +164,6 @@ python_getParams = function(){
         else{
           var val=$('#dialog #content #'+i).val()
           params[p[i].name]=val 
-          
-
-            if(p[i].name=="nodeon"){
-              if(this.changeactivity==true){
-                val=this.changevalor
-                params[p[i].name]=val 
-                
-              }
-              if(val==0){
-
-                $("#"+this.id+" g").attr('fill','#aad400')
-                $("#"+this.id+" #legend").attr('fill','#000000')
-                $("#"+this.id+" #param").attr('fill','#000000')
-                $("#noderepeat"+this.id).attr('fill','#000000')                
-                $('image#nodeonoff'+this.id).attr('href','img/on.png')
-              }
-              else{
-                $("#"+this.id+" g").attr('fill','#C0C0C0')
-                $("#"+this.id+" #legend").attr('fill','#666666')
-                $("#"+this.id+" #param").attr('fill','#666666')
-                $("#noderepeat"+this.id).attr('fill','#666666')
-                $('image#nodeonoff'+this.id).attr('href','img/off.png')
-              }
-
-            }
-            if(p[i].name=="noderepeat"){
-               if(!val){
-              val=$("#"+this.id+" #noderepeat"+this.id).text()
-            }
-              if(val==11)                            
-                $('text#noderepeat'+this.id).text("Always")              
-              else
-              $('text#noderepeat'+this.id).text(""+val)
-            }
           }
         }
       }
@@ -215,33 +181,6 @@ python_getParams = function(){
     var txt=[]
     for(var i=1;i<3;i++){
       txt.push(this.paramOptions[i].values[this.params[this.paramOptions[i].name]])
-      if(this.id.indexOf(this.type)==-1){
-        if(this.paramOptions[i].name=="nodeon") {
-          if(this.paramOptions[i].values[this.params[this.paramOptions[i].name]]=="NO"){
-
-
-            $("#"+this.id+" g").attr('fill','#C0C0C0')
-                $("#"+this.id+" #legend").attr('fill','#666666')
-                $("#"+this.id+" #param").attr('fill','#666666')
-                $("#noderepeat"+this.id).attr('fill','#666666')
-                $('image#nodeonoff'+this.id).attr('href','img/off.png')
-          }   
-          else{
-
-            $("#"+this.id+" g").attr('fill','#aad400')
-                $("#"+this.id+" #legend").attr('fill','#000000')
-                $("#"+this.id+" #param").attr('fill','#000000')
-                $("#noderepeat"+this.id).attr('fill','#000000')                
-                $('image#nodeonoff'+this.id).attr('href','img/on.png')
-          }
-        }
-        if(this.paramOptions[i].name=="noderepeat"){
-        if(this.paramOptions[i].values[this.params[this.paramOptions[i].name]]==11)                            
-          $('text#noderepeat'+this.id).text("Always")              
-        else
-          $('text#noderepeat'+this.id).text(""+this.paramOptions[i].values[this.params[this.paramOptions[i].name]])
-      }
-      }
     }
   }
 
@@ -256,14 +195,11 @@ python_accept_configure = function(){
 
 
 var PythonAction=node.extend(node.Action, {paramOptions: [{type:Text,text:current_language.python_action_msg,name:'code'}]})
-var PythonEvent=node.extend(node.Event, {paramOptions: [{type:Text,text:current_language.python_event_msg,name:'code'},{type:Array,values:['YES','NO'],name:'nodeon'},
-   {type:Array,values:['Never','01','02','03','04','05','06','07','08','09','10','Always'],name:'noderepeat'}]})
+var PythonEvent=node.extend(node.Event, {paramOptions: [{type:Text,text:current_language.python_event_msg,name:'code'}]})
 
 
 PythonAction.prototype.configure=python_configure
 PythonAction.prototype.acceptConfigure=python_accept_configure
-
-
 PythonEvent.prototype.configure=python_configure_event
 PythonEvent.prototype.acceptConfigure=python_accept_configure_event
  PythonEvent.prototype.realtime_update=python_realtime_update
