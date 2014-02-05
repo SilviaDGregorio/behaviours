@@ -322,14 +322,6 @@ void Manager::notify(Node::p node)
       lastNode=node;
       while(lastNode) {
         lastNode=notifyOne(lastNode);
-        /*if(lastNode){
-            Event *ec=dynamic_cast<Event*>(lastNode);
-            if (ec) {
-              WARNING("El evento es: %s",ec->name().c_str());
-              addEvent(ec);
-              lastNode=NULL;
-            }
-        }*/
       }
     } catch(const std::exception &e) {
       ERROR("Catched unhandled exception: %s! Stoping this chain.", e.what());
