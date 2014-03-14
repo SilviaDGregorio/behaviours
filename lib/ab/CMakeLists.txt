@@ -12,6 +12,11 @@ add_library(ab_static STATIC ${SOURCES})
 
 add_library(ab SHARED ${SOURCES})
 
-target_link_libraries(ab_static ${LUA_LIB} z xml2 curl ${JSON_LIB})
+target_link_libraries(ab ${LUA_LIB} z xml2 curl ${JSON} ${JSON_LIB} ${CURL_LIB})
+target_link_libraries(ab_static ${LUA_LIB} z xml2 curl ${JSON} ${JSON_LIB} ${CURL_LIB})
 
+
+install(TARGETS ab
+	LIBRARY DESTINATION lib
+	)
 

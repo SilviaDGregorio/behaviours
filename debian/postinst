@@ -1,2 +1,2 @@
 #!/bin/sh
-update-rc.d behaviours start 20 2 3 4 5 . stop 1 6 .
+#!update-rc.d behaviours start 20 2 3 4 5 . stop 1 6 .
