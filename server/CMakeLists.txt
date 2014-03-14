@@ -6,7 +6,7 @@ add_executable(abserver main.cpp)
 
 target_link_libraries(abserver abserver_static ${ONIONCPP_LIB} ${ONIONHANDLERS_STATIC_LIB} 
 	${ONION_STATIC_LIB} ab_static ${XML2_LIB}  ${Z_LIB} ${LUA_LIB} dl ${GCRYPT_LIB} pthread rt ${GNUTLS_LIB})
-
+message(STATUS "ONIONHANDLERS_STATIC_LIB <${ONIONHANDLERS_STATIC_LIB} > and ONION_STATIC_LIB <${ONION_STATIC_LIB}>")
 install(TARGETS abserver 
 	RUNTIME DESTINATION bin
 	)

@@ -1,9 +1,10 @@
 SET(SOURCES python2.cpp ab_module.cpp)
-
+message(STATUS "LIBPATH PYTHON2 <${LIBPATH}>")
 find_library(PYTHON2_LIB NAMES python2.7 PATHS ${LIBPATH})
-message(STATUS "PYTHON2_LIB: ${PYTHON2_LIB}")
-find_path(PYTHON2_HEADER Python.h ${CMAKE_INCLUDE_PATH}/python2.7 /usr/include/python2.7)
 
+message(STATUS "PYTHON2_LIB: ${PYTHON2_LIB}")
+find_path(PYTHON2_HEADER Python.h ${CMAKE_INCLUDE_PATH}/python2.7 /usr/include/python2.7 /usr/lib /usr/share/doc /usr/include)
+message(STATUS "PYTHON2_HEADER: <${CMAKE_INCLUDE_PATH}/python2.7 >")
 add_library(python2 SHARED ${SOURCES})
 target_link_libraries(python2 ${PYTHON2_LIB})
 
